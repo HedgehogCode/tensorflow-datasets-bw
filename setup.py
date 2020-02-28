@@ -12,7 +12,7 @@ setup(
     packages=['tensorflow_datasets_bw'],
     install_requires=[
         'scipy',
-        'tensorflow>=2',
         'tensorflow-datasets>=2',
     ],
+    include_package_data=True,
 )
