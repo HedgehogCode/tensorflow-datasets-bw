@@ -44,7 +44,8 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
             builder=self,
             description=_DESCRIPTION,
             features=tfds.features.FeaturesDict({
-                'kernel': tfds.features.Tensor(shape=[1, None, None], dtype=tf.float64)
+                'kernel':
+                tfds.features.Tensor(shape=[1, None, None], dtype=tf.float64)
             }),
             homepage='https://bitbucket.org/visinf/projects-interleaved-rtf',
             citation=_CITATION,
@@ -81,9 +82,7 @@ def get_kernels_dataset():
 def get_kernels_list():
     """Load the schelten kernels. HACK: Until the datasets integration works"""
 
-    file_path = os.path.join(os.path.abspath(__file__), '..', 'testing',
-                             'test_data', 'fake_examples', 'schelten_kernels',
-                             'kernels.mat')
+    file_path = os.path.join(os.path.abspath(__file__), '..', 'kernels.mat')
     file_path = os.path.normpath(file_path)
     kernels = io.loadmat(file_path)['kernels'][0]
     return [k for k in kernels]
