@@ -1,33 +1,53 @@
 """Utilities to handle datasets like common map functions.
 """
+from typing import List, Tuple, TypeVar, Dict, Callable, Union
+
 import tensorflow as tf
 
+T = TypeVar('T')
+K = TypeVar('K')
 
-def get_image(x):
+
+def get_image(x: Dict[str, T]) -> T:
     """Get the object with the key 'image' from the dict.
 
     Args:
         x: The dict.
-    
+
     Returns:
         The value for the key 'image'.
     """
     return x['image']
 
 
-def to_float32(x):
+def get_value(key: K) -> Callable[[Dict[K, T]], T]:
+    """Get the object with the given key from the dict.
+
+    Args:
+        key: The key.
+
+    Returns:
+        Returns a function which gets the value with the given key from a
+        given dict.
+    """
+    def get(x: Dict[K, T]) -> T:
+        return x[key]
+    return get
+
+
+def to_float32(x: tf.Tensor) -> tf.Tensor:
     """Cast the given tensor to float32.
 
     Args:
         x: The tensor of any type.
-    
+
     Returns:
         The tensor casts to float32.
     """
     return tf.cast(x, tf.float32)
 
 
-def from_255_to_1_range(x):
+def from_255_to_1_range(x: tf.Tensor) -> tf.Tensor:
     """Change the range of the tensor from 0-255 to 0-1.
 
     Args:
@@ -39,14 +59,16 @@ def from_255_to_1_range(x):
     return x / 255
 
 
-def resize(size):
+def resize(size: Union[List[int], Tuple[int], tf.TensorShape]
+           ) -> Callable[[tf.Tensor], tf.Tensor]:
     """Create a function which resizes an image tensor to the given size.
 
     Args:
         size: The target size of the image tensor.
 
     Returns:
-        A function which takes an image tensor as argument and returns a resized image tensor.
+        A function which takes an image tensor as argument and returns a
+        resized image tensor.
     """
     def apply(x):
         return tf.image.resize(x, size)
@@ -54,14 +76,16 @@ def resize(size):
     return apply
 
 
-def get_one_example(dataset, index=0, random=False):
+def get_one_example(dataset: tf.data.Dataset, index: int = 0,
+                    random: bool = False):
     """Get one example of a TensorFlow dataset for testing/visualization.
 
     Args:
         dataset: The TensorFlow dataset.
         index: The index of the example (default: 0).
-        random: If the dataset should be shuffled before the example is drawn (default: False).
-    
+        random: If the dataset should be shuffled before the example is drawn
+            (default: False).
+
     Returns:
         One example tensor of the given dataset.
     """
