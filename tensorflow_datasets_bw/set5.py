@@ -24,16 +24,28 @@ _DESCRIPTION = """
 A set of 5 images to evaluate single image super-resolution.
 """
 
-DOWNLOAD_PATH = "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.0.1rc/Set5.zip"
+DOWNLOAD_URL = "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.0.1rc/Set5.zip"
 
-_DATA_OPTIONS = ['bicubic_x4']
+_DATA_OPTIONS = [
+    (tf.image.ResizeMethod.BICUBIC, 2),
+    (tf.image.ResizeMethod.BICUBIC, 3),
+    (tf.image.ResizeMethod.BICUBIC, 4),
+    (tf.image.ResizeMethod.BICUBIC, 5),
+    (tf.image.ResizeMethod.BILINEAR, 2),
+    (tf.image.ResizeMethod.BILINEAR, 3),
+    (tf.image.ResizeMethod.BILINEAR, 4),
+    (tf.image.ResizeMethod.BILINEAR, 5),
+]
 
 
 class Set5Config(tfds.core.BuilderConfig):
     """BuilderConfig for Set5"""
-    def __init__(self, name, **kwargs):
-        if name not in _DATA_OPTIONS:
+
+    def __init__(self, resize_method: str, scale: int, **kwargs):
+        if (resize_method, scale) not in _DATA_OPTIONS:
             raise ValueError("data must be one of %s" % _DATA_OPTIONS)
+
+        name = resize_method + '_x' + str(scale)
 
         description = kwargs.get("description", "Uses %s data." % name)
         kwargs["description"] = description
@@ -43,10 +55,11 @@ class Set5Config(tfds.core.BuilderConfig):
 
 
 def _make_builder_configs():
-    def config_for(n):
-        return Set5Config(version=tfds.core.Version('0.1.0'), name=n)
+    def config_for(o):
+        return Set5Config(version=tfds.core.Version('0.1.0'),
+                          resize_method=o[0], scale=o[1])
 
-    return [config_for(n) for n in _DATA_OPTIONS]
+    return [config_for(o) for o in _DATA_OPTIONS]
 
 
 class Set5(tfds.core.GeneratorBasedBuilder):
@@ -62,15 +75,16 @@ class Set5(tfds.core.GeneratorBasedBuilder):
                 # 'lr': tfds.features.Image(),
                 'hr': tfds.features.Image()
             }),
-            homepage=
-            'http://people.rennes.inria.fr/Aline.Roumy/results/SR_BMVC12.html',
+            homepage='http://people.rennes.inria.fr/Aline.Roumy/results/SR_BMVC12.html',
             citation=_CITATION,
         )
 
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
         # Download and extract
-        extracted_path = dl_manager.extract(dl_manager.download(DOWNLOAD_PATH))
+        resource = tfds.download.Resource(
+            url=DOWNLOAD_URL, extract_method=tfds.download.ExtractMethod.ZIP)
+        extracted_path = dl_manager.download_and_extract(resource)
         data_path = os.path.join(extracted_path, 'Set5')
         return [
             tfds.core.SplitGenerator(
@@ -84,6 +98,9 @@ class Set5(tfds.core.GeneratorBasedBuilder):
         for image_file in tf.io.gfile.listdir(images_dir_path):
             if image_file.endswith('png'):
                 image_id = image_file[:-4]
+
+                image = tf.io.gfile.
+
                 yield image_id, {
                     'hr': os.path.join(images_dir_path, image_file)
                 }
