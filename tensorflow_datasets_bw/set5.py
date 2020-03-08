@@ -26,53 +26,27 @@ A set of 5 images to evaluate single image super-resolution.
 
 DOWNLOAD_URL = "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.0.1rc/Set5.zip"
 
-_DATA_OPTIONS = [
-    (tf.image.ResizeMethod.BICUBIC, 2),
-    (tf.image.ResizeMethod.BICUBIC, 3),
-    (tf.image.ResizeMethod.BICUBIC, 4),
-    (tf.image.ResizeMethod.BICUBIC, 5),
-    (tf.image.ResizeMethod.BILINEAR, 2),
-    (tf.image.ResizeMethod.BILINEAR, 3),
-    (tf.image.ResizeMethod.BILINEAR, 4),
-    (tf.image.ResizeMethod.BILINEAR, 5),
-]
-
-
-class Set5Config(tfds.core.BuilderConfig):
-    """BuilderConfig for Set5"""
-
-    def __init__(self, resize_method: str, scale: int, **kwargs):
-        if (resize_method, scale) not in _DATA_OPTIONS:
-            raise ValueError("data must be one of %s" % _DATA_OPTIONS)
-
-        name = resize_method + '_x' + str(scale)
-
-        description = kwargs.get("description", "Uses %s data." % name)
-        kwargs["description"] = description
-
-        super(Set5Config, self).__init__(name=name, **kwargs)
-        self.data = name
-
-
-def _make_builder_configs():
-    def config_for(o):
-        return Set5Config(version=tfds.core.Version('0.1.0'),
-                          resize_method=o[0], scale=o[1])
-
-    return [config_for(o) for o in _DATA_OPTIONS]
-
 
 class Set5(tfds.core.GeneratorBasedBuilder):
     """Set5 for single image super-resolution."""
 
-    BUILDER_CONFIGS = _make_builder_configs()
+    VERSION = tfds.core.Version('0.2.0')
+
+    def __init__(self, data_dir=None, config=None, version=None,
+                 resize_method: str = tf.image.ResizeMethod.BICUBIC,
+                 scale: int = 4) -> None:
+        super(Set5, self).__init__(
+            data_dir=data_dir, config=config, version=version)
+
+        self.resize_method = resize_method
+        self.scale = scale
 
     def _info(self):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
             features=tfds.features.FeaturesDict({
-                # 'lr': tfds.features.Image(),
+                'lr': tfds.features.Image(),
                 'hr': tfds.features.Image()
             }),
             homepage='http://people.rennes.inria.fr/Aline.Roumy/results/SR_BMVC12.html',
@@ -98,9 +72,27 @@ class Set5(tfds.core.GeneratorBasedBuilder):
         for image_file in tf.io.gfile.listdir(images_dir_path):
             if image_file.endswith('png'):
                 image_id = image_file[:-4]
-
-                image = tf.io.gfile.
-
+                image_path = os.path.join(images_dir_path, image_file)
                 yield image_id, {
-                    'hr': os.path.join(images_dir_path, image_file)
+                    'hr': image_path,
+                    'lr': image_path
                 }
+
+    def _as_dataset(self, split=tfds.Split.TRAIN, decoders=None,
+                    read_config=None, shuffle_files=False):
+        dataset = super(Set5, self)._as_dataset(split=split,
+                                                decoders=decoders,
+                                                read_config=read_config,
+                                                shuffle_files=shuffle_files)
+
+        def downsample(x):
+            hr = x['lr']
+            hr_shape = tf.shape(hr)
+            lr_size = (hr_shape[0] // self.scale,
+                       hr_shape[1] // self.scale)
+            lr = tf.image.resize(x['lr'], size=lr_size,
+                                 method=self.resize_method)
+            lr = tf.cast(tf.clip_by_value(lr, 0, 255), tf.uint8)
+            return {'hr': x['hr'], 'lr': lr}
+
+        return dataset.map(downsample)
