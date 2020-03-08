@@ -3,6 +3,7 @@ import tensorflow_datasets as tfds
 from .bsds500 import Bsds500
 from .schelten_kernels import ScheltenKernels
 from .set5 import Set5
+from .set14 import Set14
 from .utils import *
 
 tfds.download.add_checksums_dir(
