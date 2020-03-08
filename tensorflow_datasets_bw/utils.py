@@ -47,6 +47,22 @@ def to_float32(x: tf.Tensor) -> tf.Tensor:
     return tf.cast(x, tf.float32)
 
 
+def map_on_dict(map: Callable[[tf.Tensor], tf.Tensor]
+                ) -> Callable[[Dict[K, tf.Tensor]], Dict[K, tf.Tensor]]:
+    """Apply the mapping function on each element of a dict.
+
+    Args:
+        map: The mapping function.
+
+    Retuns:
+        A function which applies the mapping function on each element of a
+        dict.
+    """
+    def apply(x: Dict[K, tf.Tensor]) -> Dict[K, tf.Tensor]:
+        return {k: map(v) for k, v in x.items()}
+    return apply
+
+
 def from_255_to_1_range(x: tf.Tensor) -> tf.Tensor:
     """Change the range of the tensor from 0-255 to 0-1.
 
