@@ -87,13 +87,20 @@ class Set14(tfds.core.GeneratorBasedBuilder):
                                                  shuffle_files=shuffle_files)
 
         def downsample(x):
-            hr = x['lr']
-            hr_shape = tf.shape(hr)
+            hr_shape = tf.shape(x['hr'])
             lr_size = (hr_shape[0] // self.scale,
                        hr_shape[1] // self.scale)
+            hr_size = (lr_size[0] * self.scale,
+                       lr_size[1] * self.scale)
+
+            # Crop the high resolution image
+            hr = x['lr'][:hr_size[0], :hr_size[1], :]
+
+            # Resize the low resoltion image
             lr = tf.image.resize(x['lr'], size=lr_size,
                                  method=self.resize_method)
             lr = tf.cast(tf.clip_by_value(lr, 0, 255), tf.uint8)
-            return {'hr': x['hr'], 'lr': lr}
+
+            return {'hr': hr, 'lr': lr}
 
         return dataset.map(downsample)
