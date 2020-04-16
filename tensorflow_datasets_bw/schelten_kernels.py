@@ -4,7 +4,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
+import numpy as np
 import tensorflow as tf
 import tensorflow_datasets.public_api as tfds
 from scipy import io
@@ -33,6 +33,10 @@ Cascades for Blind Image Deconvolution by Kevin Schelten et al.
 
 DOWNLOAD_PATH = "https://bitbucket.org/visinf/projects-interleaved-rtf/raw/ae1f8558af8bbe09a55bdbe7bd64ed20d2c9f3fc/kernels.mat"
 
+# The maximum height and width of the kernels
+MAX_HEIGHT = 191
+MAX_WIDTH = 145
+
 
 class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
     """Realistic blur kernels from Schelten et al."""
@@ -45,7 +49,9 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
             description=_DESCRIPTION,
             features=tfds.features.FeaturesDict({
                 'kernel':
-                tfds.features.Tensor(shape=[1, None, None], dtype=tf.float64)
+                tfds.features.Tensor(
+                    shape=[MAX_HEIGHT, MAX_WIDTH], dtype=tf.float64),
+                'size': tfds.features.Tensor(shape=[2], dtype=tf.int32)
             }),
             homepage='https://bitbucket.org/visinf/projects-interleaved-rtf',
             citation=_CITATION,
@@ -65,24 +71,14 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
     def _generate_examples(self, dl_path):
         """Yields examples."""
         kernels = io.loadmat(dl_path)['kernels'][0]
+
         for kernel_id, kernel in enumerate(kernels):
-            print("Kernel shape", kernel.shape)
-            yield kernel_id, {'kernel': kernel[None, ...]}
-
-
-def get_kernels_dataset():
-    """Load the schelten kernels. HACK: Until the datasets integration works"""
-    def generator():
-        for k in get_kernels_list():
-            yield k
-
-    return tf.data.Dataset.from_generator(generator, output_types=tf.float64)
-
-
-def get_kernels_list():
-    """Load the schelten kernels. HACK: Until the datasets integration works"""
-
-    file_path = os.path.join(os.path.abspath(__file__), '..', 'kernels.mat')
-    file_path = os.path.normpath(file_path)
-    kernels = io.loadmat(file_path)['kernels'][0]
-    return [k for k in kernels]
+            # Pad the kernel to the max height and width
+            size = kernel.shape
+            padding = ((0, MAX_HEIGHT - size[0]),
+                       (0, MAX_WIDTH - size[1]))
+            kernel_padded = np.pad(kernel, padding)
+            yield kernel_id, {
+                'kernel': kernel_padded,
+                'size': size
+            }

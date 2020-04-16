@@ -92,6 +92,22 @@ def resize(size: Union[List[int], Tuple[int], tf.TensorShape]
     return apply
 
 
+def crop_kernel_to_size(x: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
+    """Crops the tensor with the name 'kernel' to the original size.
+
+
+    Args:
+        x: A dictionary which should contain a tensor for the key 'kernel which will be cropped and
+            a tensor for the key 'size' which defines the size of the cropped tensor.
+
+    Returns:
+        A dictionary with the cropped tensor for the element with the key 'kernel'.
+    """
+    kernel = x['kernel']
+    size = x['size']
+    return {'kernel': kernel[:size[0], :size[1]]}
+
+
 def get_one_example(dataset: tf.data.Dataset, index: int = 0,
                     random: bool = False):
     """Get one example of a TensorFlow dataset for testing/visualization.
