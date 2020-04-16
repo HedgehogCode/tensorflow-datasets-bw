@@ -11,6 +11,7 @@ from tensorflow_datasets_bw import schelten_kernels
 class ScheltenKernelsTest(testing.DatasetBuilderTestCase):
     EXAMPLE_DIR = 'tests/test_data/fake_examples/schelten_kernels'
     DL_DOWNLOAD_RESULT = 'kernels.mat'
+    BUILDER_CONFIG_NAMES_TO_TEST = ['all']
     DATASET_CLASS = schelten_kernels.ScheltenKernels
     SPLITS = {
         "test": 192,  # Number of fake test example

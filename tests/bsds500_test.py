@@ -11,6 +11,7 @@ from tensorflow_datasets_bw import bsds500
 class Bsds500Test(testing.DatasetBuilderTestCase):
     EXAMPLE_DIR = 'tests/test_data/fake_examples/bsds500'
     DATASET_CLASS = bsds500.Bsds500
+    BUILDER_CONFIG_NAMES_TO_TEST = ['all']
     SPLITS = {
         "train": 2,  # Number of fake train example
         "test": 2,  # Number of fake test example

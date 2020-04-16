@@ -38,11 +38,27 @@ DOWNLOAD_PATH = "https://bitbucket.org/visinf/projects-interleaved-rtf/raw/" + \
 MAX_HEIGHT = 191
 MAX_WIDTH = 145
 
+DMSP_KERNEL_IDX = [19, 29, 67, 68, 95]
+
+
+class ScheltenKernelsConfig(tfds.core.BuilderConfig):
+
+    def __init__(self, dmsp_subset=False, **kwargs):
+        super(ScheltenKernelsConfig, self).__init__(version=tfds.core.Version('0.2.0'), **kwargs)
+        self.dmsp_subset = dmsp_subset
+
 
 class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
     """Realistic blur kernels from Schelten et al."""
 
-    VERSION = tfds.core.Version('0.1.0')
+    BUILDER_CONFIGS = [
+        ScheltenKernelsConfig(name='all',
+                              description="Use all kernels.",
+                              dmsp_subset=False),
+        ScheltenKernelsConfig(name='dmsp',
+                              description="Use only the kernels used in the DMSP paper.",
+                              dmsp_subset=True)
+    ]
 
     def _info(self):
         return tfds.core.DatasetInfo(
@@ -72,6 +88,9 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
     def _generate_examples(self, dl_path):
         """Yields examples."""
         kernels = io.loadmat(dl_path)['kernels'][0]
+
+        if self.builder_config.dmsp_subset:
+            kernels = kernels[DMSP_KERNEL_IDX]
 
         for kernel_id, kernel in enumerate(kernels):
             # Pad the kernel to the max height and width
