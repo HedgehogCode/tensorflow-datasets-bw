@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(
-    name='TensorFlow Datasets BW',
+    name='tensorflow-datasets-bw',
     version='0.2.0',
     description='Extensions to TensorFlow Datasets',
     author='Benjamin Wilhelm',

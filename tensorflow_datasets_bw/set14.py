@@ -25,7 +25,8 @@ _DESCRIPTION = """
 A set of 14 images to evaluate single image super-resolution.
 """
 
-DOWNLOAD_URL = "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.0.1rc/Set14.zip"
+DOWNLOAD_URL = \
+    "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.0.1rc/Set14.zip"
 
 
 class Set14(tfds.core.GeneratorBasedBuilder):

@@ -27,10 +27,9 @@ _CITATION = """
  publisher = {IEEE Computer Society},
  address = {Washington, DC, USA},
  keywords = {Contour detection, image segmentation, computer vision.},
-} 
+}
 """
 
-# TODO(berkeley_segmentation):
 _DESCRIPTION = """
 The goal of this work is to provide an empirical basis for research on image
 segmentation and boundary detection. In order to promote scientific progress in
@@ -45,7 +44,10 @@ the study of visual grouping, we provide the following resources:
 * Performance evaluation of the leading computational approaches to grouping.
 """
 
-DOWNLOAD_PATH = "https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/BSR/BSR_full.tgz"
+DOWNLOAD_PATH = \
+    "https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/BSR/BSR_full.tgz"
+
+HOMEPAGE = 'https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html'
 
 
 class Bsds500(tfds.core.GeneratorBasedBuilder):
@@ -61,7 +63,7 @@ class Bsds500(tfds.core.GeneratorBasedBuilder):
                 'image': tfds.features.Image()
                 # TODO add segmentation and contour ground truth
             }),
-            homepage='https://www2.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/resources.html',
+            homepage=HOMEPAGE,
             citation=_CITATION,
         )
 

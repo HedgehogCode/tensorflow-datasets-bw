@@ -24,14 +24,15 @@ _CITATION = """
   year = {2015},
   pages = {494--501},
 }
-"""
+"""  # noqa: E501
 
 _DESCRIPTION = """
 Realistic blur kernels from the paper Interleaved Regression Tree Field
 Cascades for Blind Image Deconvolution by Kevin Schelten et al.
 """
 
-DOWNLOAD_PATH = "https://bitbucket.org/visinf/projects-interleaved-rtf/raw/ae1f8558af8bbe09a55bdbe7bd64ed20d2c9f3fc/kernels.mat"
+DOWNLOAD_PATH = "https://bitbucket.org/visinf/projects-interleaved-rtf/raw/" + \
+    "ae1f8558af8bbe09a55bdbe7bd64ed20d2c9f3fc/kernels.mat"
 
 # The maximum height and width of the kernels
 MAX_HEIGHT = 191
