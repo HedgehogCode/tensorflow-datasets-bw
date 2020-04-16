@@ -97,7 +97,7 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
             size = kernel.shape
             padding = ((0, MAX_HEIGHT - size[0]),
                        (0, MAX_WIDTH - size[1]))
-            kernel_padded = np.pad(kernel, padding)
+            kernel_padded = np.pad(kernel, padding, mode='constant')
             yield kernel_id, {
                 'kernel': kernel_padded,
                 'size': size
