@@ -32,15 +32,17 @@ DOWNLOAD_URL = \
 class Set14(tfds.core.GeneratorBasedBuilder):
     """Set14 for single image super-resolution."""
 
-    VERSION = tfds.core.Version('0.2.0')
+    VERSION = tfds.core.Version('0.3.0')
 
     def __init__(self, data_dir=None, config=None, version=None,
                  resize_method: str = tf.image.ResizeMethod.BICUBIC,
+                 antialias: bool = False,
                  scale: int = 4) -> None:
         super(Set14, self).__init__(
             data_dir=data_dir, config=config, version=version)
 
         self.resize_method = resize_method
+        self.antialias = antialias
         self.scale = scale
 
     def _info(self):
@@ -99,7 +101,8 @@ class Set14(tfds.core.GeneratorBasedBuilder):
 
             # Resize the low resoltion image
             lr = tf.image.resize(x['lr'], size=lr_size,
-                                 method=self.resize_method)
+                                 method=self.resize_method,
+                                 antialias=self.antialias)
             lr = tf.cast(tf.clip_by_value(lr, 0, 255), tf.uint8)
 
             return {'hr': hr, 'lr': lr}
