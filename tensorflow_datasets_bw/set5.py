@@ -102,7 +102,9 @@ class Set5(tfds.core.GeneratorBasedBuilder):
             lr = tf.image.resize(x['lr'], size=lr_size,
                                  method=self.resize_method,
                                  antialias=self.antialias)
-            lr = tf.cast(tf.clip_by_value(lr, 0, 255), tf.uint8)
+            # Clip values and back to uint8 (not needed for nearest neighbor interpolation)
+            if not self.resize_method == 'nearest':
+                lr = tf.cast(tf.clip_by_value(lr, 0, 255), tf.uint8)
 
             return {'hr': hr, 'lr': lr}
 
