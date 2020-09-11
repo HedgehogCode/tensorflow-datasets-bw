@@ -31,8 +31,8 @@ Realistic blur kernels from the paper Interleaved Regression Tree Field
 Cascades for Blind Image Deconvolution by Kevin Schelten et al.
 """
 
-DOWNLOAD_PATH = "https://bitbucket.org/visinf/projects-interleaved-rtf/raw/" + \
-    "ae1f8558af8bbe09a55bdbe7bd64ed20d2c9f3fc/kernels.mat"
+DOWNLOAD_PATH = "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.4.2/" +\
+    "schelten_kernels.mat"
 
 # The maximum height and width of the kernels
 MAX_HEIGHT = 191
@@ -44,7 +44,7 @@ DMSP_KERNEL_IDX = [19, 29, 67, 68, 95]
 class ScheltenKernelsConfig(tfds.core.BuilderConfig):
 
     def __init__(self, dmsp_subset=False, **kwargs):
-        super(ScheltenKernelsConfig, self).__init__(version=tfds.core.Version('0.2.0'), **kwargs)
+        super(ScheltenKernelsConfig, self).__init__(version=tfds.core.Version('0.3.0'), **kwargs)
         self.dmsp_subset = dmsp_subset
 
 
@@ -70,7 +70,7 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
                     shape=[MAX_HEIGHT, MAX_WIDTH], dtype=tf.float64),
                 'size': tfds.features.Tensor(shape=[2], dtype=tf.int32)
             }),
-            homepage='https://bitbucket.org/visinf/projects-interleaved-rtf',
+            homepage='http://ieeexplore.ieee.org/document/7045926/',
             citation=_CITATION,
         )
 
