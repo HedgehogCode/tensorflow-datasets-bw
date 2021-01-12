@@ -11,7 +11,7 @@ def draw_dataset(dataset, num_images, num_col, figsize=(15, 40)):
         num_cols: The number of columns of the resulting figure.
         figsize: The size of the resulting figure (default: (15, 40)).
     """
-    plt.figure(figsize=figsize)
+    fig = plt.figure(figsize=figsize)
     for idx, image in enumerate(dataset):
         plt.subplot(math.ceil(num_images / num_col), num_col, idx + 1)
         plt.imshow(image)
@@ -19,6 +19,7 @@ def draw_dataset(dataset, num_images, num_col, figsize=(15, 40)):
         if idx + 1 == num_images:
             break
     plt.show()
+    return fig
 
 
 def draw_images(images, ncol=None, figsize=(15, 8)):
@@ -47,3 +48,4 @@ def draw_images(images, ncol=None, figsize=(15, 8)):
 
         ax[ridx, cidx].imshow(image)
     plt.show()
+    return fig, ax
