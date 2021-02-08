@@ -1,5 +1,0 @@
-https://users.soe.ucsc.edu/~milanfar/software/datasets/Adyoron_small.mat 1904608 0e85ad9df17827dc6fc6a6fbf77aff6b1a46dcacf91ec4b99e750e34ebd30253
-https://users.soe.ucsc.edu/~milanfar/software/datasets/Book_case1.mat 23040208 021aeed5509024a51e1045fe46be25d0e4ae7dc75f679fcec9a490b53150fd15
-https://users.soe.ucsc.edu/~milanfar/software/datasets/Book_case1_small.mat 991200 7b0fa691871cd686a9ecceb723e06e610ebe2a8dfa0afb492918ebe5cf420f2f
-https://users.soe.ucsc.edu/~milanfar/software/datasets/face_adyoron_1.mat 232768 6a8bbfbe1190026c0358709b93b9b4acb10bc4386cb184737c438bcd2d38608a
-https://users.soe.ucsc.edu/~milanfar/software/datasets/face_adyoron_2.mat 119248 7ffb1a4e488da65bccf01bd23ad2bf1128b7d8574a2405018a1fffbe39608d16

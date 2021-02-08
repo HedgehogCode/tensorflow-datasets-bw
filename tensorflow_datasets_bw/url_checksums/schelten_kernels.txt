@@ -1,2 +1,0 @@
-https://bitbucket.org/visinf/projects-interleaved-rtf/raw/ae1f8558af8bbe09a55bdbe7bd64ed20d2c9f3fc/kernels.mat 450387 374385cbab155cca2ba73a7c3558b0de64a7cd1bd3fbd519f3afb44440e3b9c8
-https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.4.2/schelten_kernels.mat 450387 374385cbab155cca2ba73a7c3558b0de64a7cd1bd3fbd519f3afb44440e3b9c8
