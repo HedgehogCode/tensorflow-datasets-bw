@@ -12,7 +12,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 # Install essentials
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get update \
-    && apt-get -y install --no-install-recommends git vim zsh tmux
+    && apt-get -y install --no-install-recommends git vim zsh tmux less
 
 # Runtime dependencies
 COPY ./requirements.txt /root/requirements.txt
