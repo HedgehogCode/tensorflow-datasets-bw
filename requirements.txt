@@ -1,3 +1,4 @@
 scipy
+imageio
 tensorflow>=2
 tensorflow-datasets>=2

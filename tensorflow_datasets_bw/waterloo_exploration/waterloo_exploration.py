@@ -3,6 +3,7 @@
 import os
 import glob
 
+import imageio
 import tensorflow_datasets as tfds
 
 _DESCRIPTION = """
@@ -25,6 +26,8 @@ _CITATION = """
   publisher={IEEE}
 }
 """  # noqa: E501
+
+# TODO Get rid of imageio dependency and improve performance
 
 
 class WaterlooExploration(tfds.core.GeneratorBasedBuilder):
@@ -66,7 +69,12 @@ class WaterlooExploration(tfds.core.GeneratorBasedBuilder):
         """Yields examples."""
         files = glob.glob(os.path.join(path, '*.bmp'))
         keys = [os.path.basename(n)[:-4] for n in files]
-        for key, file in zip(keys, files):
+        for key, f in zip(keys, files):
+            image = imageio.imread(f)
+            if image.shape[2] != 3:
+                # Some images contain an alpha channel
+                # Remove it
+                image = image[:, :, :3]
             yield key, {
-                'image': file
+                'image': image
             }
