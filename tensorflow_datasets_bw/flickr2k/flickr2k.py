@@ -6,7 +6,7 @@ import glob
 import tensorflow_datasets as tfds
 
 _DESCRIPTION = """
-The Flickr2k dataset was collected using the Flickr API. It contains 2650 images. Each image is
+The Flickr2K dataset was collected using the Flickr API. It contains 2650 images. Each image is
 available in high resolution, low resolution with bicubic downsampling and low resolution with
 unknown downsampling. Downsamling factors are 2x, 3x and 4x.
 
@@ -38,7 +38,7 @@ class Flickr2k(tfds.core.GeneratorBasedBuilder):
 
     MANUAL_DOWNLOAD_INSTRUCTIONS = """\
     manual_dir (usually `~/tensorflow_datasets/downloads/manual`) should contain the folder
-    'Flickr2k' download and extract the dataset from
+    'Flickr2K' download and extract the dataset from
     https://cv.snu.ac.kr/research/EDSR/Flickr2K.tar.
       """
 
@@ -57,7 +57,7 @@ class Flickr2k(tfds.core.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
         data_path = os.path.join(dl_manager.manual_dir,
-                                 'Flickr2k', 'Flickr2k_HR')
+                                 'Flickr2K', 'Flickr2K_HR')
 
         return {
             'train': self._generate_examples(data_path),
