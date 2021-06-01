@@ -86,17 +86,18 @@ class Set5(tfds.core.GeneratorBasedBuilder):
                                                 shuffle_files=shuffle_files)
 
         def downsample(x):
-            hr_shape = tf.shape(x['hr'])
+            img = x['hr']  # x['hr'] and x['lr'] are equal
+            hr_shape = tf.shape(img)
             lr_size = (hr_shape[0] // self.scale,
                        hr_shape[1] // self.scale)
             hr_size = (lr_size[0] * self.scale,
                        lr_size[1] * self.scale)
 
             # Crop the high resolution image
-            hr = x['lr'][:hr_size[0], :hr_size[1], :]
+            hr = img[:hr_size[0], :hr_size[1], :]
 
             # Resize the low resoltion image
-            lr = tf.image.resize(x['lr'], size=lr_size,
+            lr = tf.image.resize(hr, size=lr_size,
                                  method=self.resize_method,
                                  antialias=self.antialias)
             # Clip values and back to uint8 (not needed for nearest neighbor interpolation)
