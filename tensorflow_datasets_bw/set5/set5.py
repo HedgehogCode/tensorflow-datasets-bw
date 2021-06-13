@@ -28,7 +28,7 @@ DOWNLOAD_URL = \
 class Set5(tfds.core.GeneratorBasedBuilder):
     """Set5 for single image super-resolution."""
 
-    VERSION = tfds.core.Version('0.3.0')
+    VERSION = tfds.core.Version('0.4.0')
 
     def __init__(self, data_dir=None, config=None, version=None,
                  resize_method: str = tf.image.ResizeMethod.BICUBIC,
@@ -102,7 +102,9 @@ class Set5(tfds.core.GeneratorBasedBuilder):
                                  antialias=self.antialias)
             # Clip values and back to uint8 (not needed for nearest neighbor interpolation)
             if not self.resize_method == 'nearest':
-                lr = tf.cast(tf.clip_by_value(lr, 0, 255), tf.uint8)
+                lr = tf.round(lr)
+                lr = tf.clip_by_value(lr, 0, 255)
+                lr = tf.cast(lr, tf.uint8)
 
             return {'hr': hr, 'lr': lr}
 
