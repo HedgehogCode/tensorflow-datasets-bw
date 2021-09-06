@@ -4,4 +4,5 @@ from .set5 import Set5
 from .set14 import Set14
 from .waterloo_exploration import WaterlooExploration
 from .flickr2k import Flickr2k
+from .cbsd68 import Cbsd68
 from .utils import *  # noqa: F403

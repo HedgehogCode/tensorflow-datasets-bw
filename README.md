@@ -10,6 +10,13 @@ A collection of datasets extending tensorflow-datasets.
 $ pytest
 ```
 
+## Adding a checksum
+
+```
+export PYTHONPATH=$(pwd)
+tfds build --imports tensorflow_datasets_bw --register_checksums cbsd68
+```
+
 ## TODOs
 
 * Add Waterloo Exploration dataset: http://ivc.uwaterloo.ca/database/WaterlooExploration/exploration_database_and_code.rar
