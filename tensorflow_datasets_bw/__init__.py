@@ -6,4 +6,5 @@ from .waterloo_exploration import WaterlooExploration
 from .flickr2k import Flickr2k
 from .cbsd68 import Cbsd68
 from .kodak24 import Kodak24
+from .mc_master import McMaster
 from .utils import *  # noqa: F403
