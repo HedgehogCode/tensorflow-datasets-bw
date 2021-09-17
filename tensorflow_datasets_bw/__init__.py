@@ -8,4 +8,5 @@ from .cbsd68 import Cbsd68
 from .kodak24 import Kodak24
 from .mc_master import McMaster
 from .mdsp_color_sr import MdspColorSr
+from .vid4 import Vid4
 from .utils import *  # noqa: F403

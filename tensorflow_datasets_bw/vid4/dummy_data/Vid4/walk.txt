@@ -1,0 +1,3 @@
+walk/001.png
+walk/002.png
+walk/003.png
