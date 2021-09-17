@@ -108,6 +108,33 @@ def crop_kernel_to_size(x: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
     return {'kernel': kernel[:size[0], :size[1]]}
 
 
+def lf_to_batch(lf: tf.Tensor) -> tf.Tensor:
+    """Flatten the first two dimensions of a light field to get a batch of images.
+
+    Args:
+        lf (TensorLike): The light field with shape [GH, GW, H, W, C]
+
+    Returns:
+        tf.Tensor: The flattened batch of light field images with shape [GH x GW, H, W, C]
+    """
+    size = tf.shape(lf)[2:]
+    return tf.reshape(lf, (-1, *size))
+
+
+def lf_batch_idx(grid, i: int, j: int):
+    """Compute the index of a scpecific frame in the flattened light field.
+
+    Args:
+        grid (Tuple): The shape of the light field grid
+        i: The index in the first grid dimension
+        j: The index in the second grid dimension
+
+    Returns:
+        The index in a flattened light field.
+    """
+    return i * grid[1] + j
+
+
 def get_one_example(dataset: tf.data.Dataset, index: int = 0,
                     random: bool = False):
     """Get one example of a TensorFlow dataset for testing/visualization.
