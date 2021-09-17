@@ -6,7 +6,13 @@
 	},
 	// Set *default* container specific settings.json values on container create.
 	"settings": {
-		"terminal.integrated.shell.linux": "/bin/bash",
+		"terminal.integrated.defaultProfile.linux": "zsh",
+		"terminal.integrated.profiles.linux": {
+			"zsh": {
+				"path": "/usr/bin/zsh",
+				"args": []
+			}
+		},
 		"python.pythonPath": "/usr/bin/python",
 		"jupyter.alwaysTrustNotebooks": true,
 		"python.languageServer": "Pylance",
