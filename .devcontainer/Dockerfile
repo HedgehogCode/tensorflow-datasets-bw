@@ -19,4 +19,4 @@ COPY ./requirements.txt /root/requirements.txt
 RUN pip install -r /root/requirements.txt
 
 # Develop dependencies
-RUN pip install flake8 mypy pytest autopep8 jupyter matplotlib
+RUN pip install flake8 mypy pytest black jupyter matplotlib

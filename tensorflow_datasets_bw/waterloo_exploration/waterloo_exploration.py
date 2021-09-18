@@ -33,9 +33,9 @@ _CITATION = """
 class WaterlooExploration(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for waterloo_exploration dataset."""
 
-    VERSION = tfds.core.Version('0.0.1')
+    VERSION = tfds.core.Version("0.0.1")
     RELEASE_NOTES = {
-        '0.0.1': 'Alpha release.',
+        "0.0.1": "Alpha release.",
     }
 
     MANUAL_DOWNLOAD_INSTRUCTIONS = """\
@@ -49,25 +49,28 @@ class WaterlooExploration(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
-            features=tfds.features.FeaturesDict({
-                'image': tfds.features.Image(shape=(None, None, 3)),
-            }),
-            homepage='https://ece.uwaterloo.ca/~k29ma/exploration/',
+            features=tfds.features.FeaturesDict(
+                {
+                    "image": tfds.features.Image(shape=(None, None, 3)),
+                }
+            ),
+            homepage="https://ece.uwaterloo.ca/~k29ma/exploration/",
             citation=_CITATION,
         )
 
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
-        data_path = os.path.join(dl_manager.manual_dir,
-                                 'exploration_database_and_code', 'pristine_images')
+        data_path = os.path.join(
+            dl_manager.manual_dir, "exploration_database_and_code", "pristine_images"
+        )
 
         return {
-            'train': self._generate_examples(data_path),
+            "train": self._generate_examples(data_path),
         }
 
     def _generate_examples(self, path):
         """Yields examples."""
-        files = glob.glob(os.path.join(path, '*.bmp'))
+        files = glob.glob(os.path.join(path, "*.bmp"))
         keys = [os.path.basename(n)[:-4] for n in files]
         for key, f in zip(keys, files):
             image = imageio.imread(f)
@@ -75,6 +78,4 @@ class WaterlooExploration(tfds.core.GeneratorBasedBuilder):
                 # Some images contain an alpha channel
                 # Remove it
                 image = image[:, :, :3]
-            yield key, {
-                'image': image
-            }
+            yield key, {"image": image}

@@ -17,16 +17,17 @@ _CITATION = """
 """
 
 IMAGE_URLS = {
-    f"{i:02d}": f"http://r0k.us/graphics/kodak/kodak/kodim{i:02d}.png" for i in range(1, 25)
+    f"{i:02d}": f"http://r0k.us/graphics/kodak/kodak/kodim{i:02d}.png"
+    for i in range(1, 25)
 }
 
 
 class Kodak24(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for kodak24 dataset."""
 
-    VERSION = tfds.core.Version('0.0.1')
+    VERSION = tfds.core.Version("0.0.1")
     RELEASE_NOTES = {
-        '0.0.1': 'Alpha release.',
+        "0.0.1": "Alpha release.",
     }
 
     def _info(self) -> tfds.core.DatasetInfo:
@@ -34,10 +35,12 @@ class Kodak24(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
-            features=tfds.features.FeaturesDict({
-                'image': tfds.features.Image(shape=(None, None, 3)),
-            }),
-            homepage='http://r0k.us/graphics/kodak/',
+            features=tfds.features.FeaturesDict(
+                {
+                    "image": tfds.features.Image(shape=(None, None, 3)),
+                }
+            ),
+            homepage="http://r0k.us/graphics/kodak/",
             citation=_CITATION,
         )
 
@@ -46,12 +49,12 @@ class Kodak24(tfds.core.GeneratorBasedBuilder):
         paths = dl_manager.download_and_extract(IMAGE_URLS)
 
         return {
-            'test': self._generate_examples(paths),
+            "test": self._generate_examples(paths),
         }
 
     def _generate_examples(self, paths):
         """Yields examples."""
         for key, file in paths.items():
             yield key, {
-                'image': file,
+                "image": file,
             }

@@ -27,8 +27,10 @@ _CITATION = """
 }
 """  # noqa: E501
 
-DOWNLOAD_PATH = "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.4.2/" +\
-    "schelten_kernels.mat"
+DOWNLOAD_PATH = (
+    "https://github.com/HedgehogCode/tensorflow-datasets-bw/releases/download/0.4.2/"
+    + "schelten_kernels.mat"
+)
 
 # The maximum height and width of the kernels
 MAX_HEIGHT = 191
@@ -38,9 +40,10 @@ DMSP_KERNEL_IDX = [19, 29, 67, 68, 95]
 
 
 class ScheltenKernelsConfig(tfds.core.BuilderConfig):
-
     def __init__(self, dmsp_subset=False, **kwargs):
-        super(ScheltenKernelsConfig, self).__init__(version=tfds.core.Version('0.3.0'), **kwargs)
+        super(ScheltenKernelsConfig, self).__init__(
+            version=tfds.core.Version("0.3.0"), **kwargs
+        )
         self.dmsp_subset = dmsp_subset
 
 
@@ -48,25 +51,29 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
     """Realistic blur kernels from Schelten et al."""
 
     BUILDER_CONFIGS = [
-        ScheltenKernelsConfig(name='all',
-                              description="Use all kernels.",
-                              dmsp_subset=False),
-        ScheltenKernelsConfig(name='dmsp',
-                              description="Use only the kernels used in the DMSP paper.",
-                              dmsp_subset=True)
+        ScheltenKernelsConfig(
+            name="all", description="Use all kernels.", dmsp_subset=False
+        ),
+        ScheltenKernelsConfig(
+            name="dmsp",
+            description="Use only the kernels used in the DMSP paper.",
+            dmsp_subset=True,
+        ),
     ]
 
     def _info(self):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
-            features=tfds.features.FeaturesDict({
-                'kernel':
-                tfds.features.Tensor(
-                    shape=[MAX_HEIGHT, MAX_WIDTH], dtype=tf.float64),
-                'size': tfds.features.Tensor(shape=[2], dtype=tf.int32)
-            }),
-            homepage='http://ieeexplore.ieee.org/document/7045926/',
+            features=tfds.features.FeaturesDict(
+                {
+                    "kernel": tfds.features.Tensor(
+                        shape=[MAX_HEIGHT, MAX_WIDTH], dtype=tf.float64
+                    ),
+                    "size": tfds.features.Tensor(shape=[2], dtype=tf.int32),
+                }
+            ),
+            homepage="http://ieeexplore.ieee.org/document/7045926/",
             citation=_CITATION,
         )
 
@@ -83,7 +90,7 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
 
     def _generate_examples(self, dl_path):
         """Yields examples."""
-        kernels = io.loadmat(dl_path)['kernels'][0]
+        kernels = io.loadmat(dl_path)["kernels"][0]
 
         if self.builder_config.dmsp_subset:
             kernels = kernels[DMSP_KERNEL_IDX]
@@ -91,10 +98,6 @@ class ScheltenKernels(tfds.core.GeneratorBasedBuilder):
         for kernel_id, kernel in enumerate(kernels):
             # Pad the kernel to the max height and width
             size = kernel.shape
-            padding = ((0, MAX_HEIGHT - size[0]),
-                       (0, MAX_WIDTH - size[1]))
-            kernel_padded = np.pad(kernel, padding, mode='constant')
-            yield kernel_id, {
-                'kernel': kernel_padded,
-                'size': size
-            }
+            padding = ((0, MAX_HEIGHT - size[0]), (0, MAX_WIDTH - size[1]))
+            kernel_padded = np.pad(kernel, padding, mode="constant")
+            yield kernel_id, {"kernel": kernel_padded, "size": size}

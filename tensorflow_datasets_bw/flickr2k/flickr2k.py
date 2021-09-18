@@ -31,9 +31,9 @@ _CITATION = """
 class Flickr2k(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for flickr2k dataset."""
 
-    VERSION = tfds.core.Version('0.0.1')
+    VERSION = tfds.core.Version("0.0.1")
     RELEASE_NOTES = {
-        '0.0.1': 'Alpha release.',
+        "0.0.1": "Alpha release.",
     }
 
     MANUAL_DOWNLOAD_INSTRUCTIONS = """\
@@ -47,27 +47,26 @@ class Flickr2k(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
-            features=tfds.features.FeaturesDict({
-                'hr': tfds.features.Image(shape=(None, None, 3)),
-            }),
-            homepage='https://github.com/limbee/NTIRE2017',
+            features=tfds.features.FeaturesDict(
+                {
+                    "hr": tfds.features.Image(shape=(None, None, 3)),
+                }
+            ),
+            homepage="https://github.com/limbee/NTIRE2017",
             citation=_CITATION,
         )
 
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
-        data_path = os.path.join(dl_manager.manual_dir,
-                                 'Flickr2K', 'Flickr2K_HR')
+        data_path = os.path.join(dl_manager.manual_dir, "Flickr2K", "Flickr2K_HR")
 
         return {
-            'train': self._generate_examples(data_path),
+            "train": self._generate_examples(data_path),
         }
 
     def _generate_examples(self, path):
         """Yields examples."""
-        files = glob.glob(os.path.join(path, '*.png'))
+        files = glob.glob(os.path.join(path, "*.png"))
         keys = [os.path.basename(n)[:-4] for n in files]
         for key, file in zip(keys, files):
-            yield key, {
-                'hr': file
-            }
+            yield key, {"hr": file}

@@ -26,16 +26,17 @@ NAMES = {
     "Book_case1": "Bookcase 1",
 }
 DOWNLOAD_PATHS = {
-    k: f"https://users.soe.ucsc.edu/~milanfar/software/datasets/{k}.mat" for k in NAMES.keys()
+    k: f"https://users.soe.ucsc.edu/~milanfar/software/datasets/{k}.mat"
+    for k in NAMES.keys()
 }
 
 
 class MdspColorSr(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for mdsp_color_sr dataset."""
 
-    VERSION = tfds.core.Version('0.0.1')
+    VERSION = tfds.core.Version("0.0.1")
     RELEASE_NOTES = {
-        '0.0.1': 'Alpha release.',
+        "0.0.1": "Alpha release.",
     }
 
     def _info(self) -> tfds.core.DatasetInfo:
@@ -43,10 +44,12 @@ class MdspColorSr(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
-            features=tfds.features.FeaturesDict({
-                'video': tfds.features.Video(shape=(None, None, None, 3)),
-            }),
-            homepage='https://users.soe.ucsc.edu/~milanfar/software/sr-datasets.html',
+            features=tfds.features.FeaturesDict(
+                {
+                    "video": tfds.features.Video(shape=(None, None, None, 3)),
+                }
+            ),
+            homepage="https://users.soe.ucsc.edu/~milanfar/software/sr-datasets.html",
             citation=_CITATION,
         )
 
@@ -55,7 +58,7 @@ class MdspColorSr(tfds.core.GeneratorBasedBuilder):
         paths = dl_manager.download(DOWNLOAD_PATHS)
 
         return {
-            'test': self._generate_examples(paths),
+            "test": self._generate_examples(paths),
         }
 
     def _generate_examples(self, paths):
@@ -65,6 +68,4 @@ class MdspColorSr(tfds.core.GeneratorBasedBuilder):
             video = video[key]
             video = np.transpose(video, axes=[3, 0, 1, 2])
             print(video.dtype)
-            yield NAMES[key], {
-                'video': video
-            }
+            yield NAMES[key], {"video": video}

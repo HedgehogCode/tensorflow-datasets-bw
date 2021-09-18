@@ -4,12 +4,11 @@ from typing import Any, List, Tuple, TypeVar, Dict, Callable, Union
 
 import tensorflow as tf
 
-T = TypeVar('T')
-K = TypeVar('K')
+T = TypeVar("T")
+K = TypeVar("K")
 
 
-def get_one_example(dataset: tf.data.Dataset, index: int = 0,
-                    random: bool = False):
+def get_one_example(dataset: tf.data.Dataset, index: int = 0, random: bool = False):
     """Get one example of a TensorFlow dataset for testing/visualization.
 
     Args:
@@ -35,6 +34,7 @@ def get_one_example(dataset: tf.data.Dataset, index: int = 0,
 
 # General helpers for mapping functions
 
+
 def compose(*functions: Callable[[Any], Any]) -> Callable[[Any], Any]:
     """Compose the given functions which all take one argument.
 
@@ -44,15 +44,18 @@ def compose(*functions: Callable[[Any], Any]) -> Callable[[Any], Any]:
     Returns:
         A function which applies the given functions in the order they appear in the argument
     """
+
     def apply(x):
         for f in functions:
             x = f(x)
         return x
+
     return apply
 
 
-def map_on_dict(map: Callable[[tf.Tensor], tf.Tensor]
-                ) -> Callable[[Dict[K, tf.Tensor]], Dict[K, tf.Tensor]]:
+def map_on_dict(
+    map: Callable[[tf.Tensor], tf.Tensor]
+) -> Callable[[Dict[K, tf.Tensor]], Dict[K, tf.Tensor]]:
     """Apply the mapping function on each element of a dict.
 
     Args:
@@ -62,13 +65,16 @@ def map_on_dict(map: Callable[[tf.Tensor], tf.Tensor]
         A function which applies the mapping function on each element of a
         dict.
     """
+
     def apply(x: Dict[K, tf.Tensor]) -> Dict[K, tf.Tensor]:
         return {k: map(v) for k, v in x.items()}
+
     return apply
 
 
-def map_on_dict_key(key: K, mapping: Callable[[T], T]
-                    ) -> Callable[[Dict[K, T]], Dict[K, T]]:
+def map_on_dict_key(
+    key: K, mapping: Callable[[T], T]
+) -> Callable[[Dict[K, T]], Dict[K, T]]:
     """Apply a mapping function on one key of the dict and leave the others unchanged.
 
     Args:
@@ -79,9 +85,11 @@ def map_on_dict_key(key: K, mapping: Callable[[T], T]
         A function which takes a dictionary and applies the given function on the one
         element.
     """
+
     def apply(d):
         d[key] = mapping(d[key])
         return d
+
     return apply
 
 
@@ -95,12 +103,15 @@ def get_value(key: K) -> Callable[[Dict[K, T]], T]:
         Returns a function which gets the value with the given key from a
         given dict.
     """
+
     def get(x: Dict[K, T]) -> T:
         return x[key]
+
     return get
 
 
 # Helpers for mapping images
+
 
 def get_image(x: Dict[str, T]) -> T:
     """Get the object with the key 'image' from the dict.
@@ -111,7 +122,7 @@ def get_image(x: Dict[str, T]) -> T:
     Returns:
         The value for the key 'image'.
     """
-    return x['image']
+    return x["image"]
 
 
 def to_float32(x: tf.Tensor) -> tf.Tensor:
@@ -138,8 +149,9 @@ def from_255_to_1_range(x: tf.Tensor) -> tf.Tensor:
     return x / 255
 
 
-def resize(size: Union[List[int], Tuple[int], tf.TensorShape]
-           ) -> Callable[[tf.Tensor], tf.Tensor]:
+def resize(
+    size: Union[List[int], Tuple[int], tf.TensorShape]
+) -> Callable[[tf.Tensor], tf.Tensor]:
     """Create a function which resizes an image tensor to the given size.
 
     Args:
@@ -149,6 +161,7 @@ def resize(size: Union[List[int], Tuple[int], tf.TensorShape]
         A function which takes an image tensor as argument and returns a
         resized image tensor.
     """
+
     def apply(x):
         return tf.image.resize(x, size)
 
@@ -166,12 +179,13 @@ def crop_kernel_to_size(x: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
     Returns:
         A dictionary with the cropped tensor for the element with the key 'kernel'.
     """
-    kernel = x['kernel']
-    size = x['size']
-    return {'kernel': kernel[:size[0], :size[1]]}
+    kernel = x["kernel"]
+    size = x["size"]
+    return {"kernel": kernel[: size[0], : size[1]]}
 
 
 # Helpers for light fields
+
 
 def lf_to_batch(lf: tf.Tensor) -> tf.Tensor:
     """Flatten the first two dimensions of a light field to get a batch of images.

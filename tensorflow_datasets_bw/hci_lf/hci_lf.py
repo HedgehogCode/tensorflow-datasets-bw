@@ -42,15 +42,15 @@ class HciLf(tfds.core.GeneratorBasedBuilder):
 
     BUILDER_CONFIGS = [
         HciLfConfig(
-            name='simulated',
-            description='All simulated light fields',
+            name="simulated",
+            description="All simulated light fields",
             stratified=False,
         ),
         HciLfConfig(
-            name='stratified',
-            description='Stratisfied light fields',
+            name="stratified",
+            description="Stratisfied light fields",
             stratified=True,
-        )
+        ),
     ]
 
     MANUAL_DOWNLOAD_INSTRUCTIONS = """\
@@ -68,12 +68,18 @@ class HciLf(tfds.core.GeneratorBasedBuilder):
         return tfds.core.DatasetInfo(
             builder=self,
             description=_DESCRIPTION,
-            features=tfds.features.FeaturesDict({
-                'lf': tfds.features.Tensor(shape=(9, 9, 512, 512, 3), dtype=tf.uint8),
-                'depth': tfds.features.Tensor(shape=(512, 512), dtype=tf.float32),
-                'disparity': tfds.features.Tensor(shape=(512, 512), dtype=tf.float32),
-            }),
-            homepage='https://lightfield-analysis.uni-konstanz.de/',
+            features=tfds.features.FeaturesDict(
+                {
+                    "lf": tfds.features.Tensor(
+                        shape=(9, 9, 512, 512, 3), dtype=tf.uint8
+                    ),
+                    "depth": tfds.features.Tensor(shape=(512, 512), dtype=tf.float32),
+                    "disparity": tfds.features.Tensor(
+                        shape=(512, 512), dtype=tf.float32
+                    ),
+                }
+            ),
+            homepage="https://lightfield-analysis.uni-konstanz.de/",
             citation=_CITATION,
         )
 
@@ -83,13 +89,15 @@ class HciLf(tfds.core.GeneratorBasedBuilder):
 
         if self.builder_config.stratified:
             return {
-                'test': self._generate_examples(os.path.join(data_path, "stratified"))
+                "test": self._generate_examples(os.path.join(data_path, "stratified"))
             }
 
         return {
-            'train': self._generate_examples(os.path.join(data_path, "training")),
-            'test': self._generate_examples(os.path.join(data_path, "test")),
-            'validation': self._generate_examples(os.path.join(data_path, "additional")),
+            "train": self._generate_examples(os.path.join(data_path, "training")),
+            "test": self._generate_examples(os.path.join(data_path, "test")),
+            "validation": self._generate_examples(
+                os.path.join(data_path, "additional")
+            ),
         }
 
     def _generate_examples(self, path):
@@ -110,7 +118,9 @@ class HciLf(tfds.core.GeneratorBasedBuilder):
             # Read the light field views
             view_paths = sorted(tf.io.gfile.glob(os.path.join(p, "input_*.png")))
             views = np.array([imageio.imread(v) for v in view_paths])
-            lf = np.reshape(views, (num_cams_y, num_cams_x, views.shape[1], views.shape[2], 3))
+            lf = np.reshape(
+                views, (num_cams_y, num_cams_x, views.shape[1], views.shape[2], 3)
+            )
 
             # Read the depth map
             depth_file = os.path.join(p, "gt_depth_lowres.pfm")
@@ -127,19 +137,19 @@ class HciLf(tfds.core.GeneratorBasedBuilder):
                 disp_map = np.zeros([512, 512], dtype=np.float32)
 
             yield scene, {
-                'lf': lf,
-                'depth': depth_map,
-                'disparity': disp_map,
+                "lf": lf,
+                "depth": depth_map,
+                "disparity": disp_map,
             }
 
 
 # Slightly adapted from https://gist.github.com/aminzabardast/cdddae35c367c611b6fd5efd5d63a326
 def _read_pfm(file):
-    """ Read a PFM file into a Numpy array. Note that it will have
+    """Read a PFM file into a Numpy array. Note that it will have
     a shape of H x W, not W x H. Returns a tuple containing the
     loaded image and the scale factor from the file.
     """
-    with tf.io.gfile.GFile(file, 'rb') as f:
+    with tf.io.gfile.GFile(file, "rb") as f:
         color = None
         width = None
         height = None
@@ -147,27 +157,27 @@ def _read_pfm(file):
         endian = None
 
         header = f.readline().rstrip()
-        if header.decode('ascii') == 'PF':
+        if header.decode("ascii") == "PF":
             color = True
-        elif header.decode('ascii') == 'Pf':
+        elif header.decode("ascii") == "Pf":
             color = False
         else:
-            raise Exception('Not a PFM file.')
+            raise Exception("Not a PFM file.")
 
-        dim_match = re.search(r'(\d+)\s(\d+)', f.readline().decode('ascii'))
+        dim_match = re.search(r"(\d+)\s(\d+)", f.readline().decode("ascii"))
         if dim_match:
             width, height = map(int, dim_match.groups())
         else:
-            raise Exception('Malformed PFM header.')
+            raise Exception("Malformed PFM header.")
 
         scale = float(f.readline().rstrip())
         if scale < 0:  # little-endian
-            endian = '<'
+            endian = "<"
             scale = -scale
         else:
-            endian = '>'  # big-endian
+            endian = ">"  # big-endian
 
-        data = np.frombuffer(f.read(), endian + 'f')
+        data = np.frombuffer(f.read(), endian + "f")
         shape = (height, width, 3) if color else (height, width)
 
         data = np.reshape(data, shape)
