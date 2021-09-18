@@ -1,6 +1,6 @@
 """Utilities to handle datasets like common map functions.
 """
-from typing import List, Tuple, TypeVar, Dict, Callable, Union
+from typing import Any, List, Tuple, TypeVar, Dict, Callable, Union
 
 import tensorflow as tf
 
@@ -8,16 +8,81 @@ T = TypeVar('T')
 K = TypeVar('K')
 
 
-def get_image(x: Dict[str, T]) -> T:
-    """Get the object with the key 'image' from the dict.
+def get_one_example(dataset: tf.data.Dataset, index: int = 0,
+                    random: bool = False):
+    """Get one example of a TensorFlow dataset for testing/visualization.
 
     Args:
-        x: The dict.
+        dataset: The TensorFlow dataset.
+        index: The index of the example (default: 0).
+        random: If the dataset should be shuffled before the example is drawn
+            (default: False).
 
     Returns:
-        The value for the key 'image'.
+        One example tensor of the given dataset.
     """
-    return x['image']
+    if random:
+        d = dataset.shuffle(100)
+    else:
+        d = dataset
+
+    i = 0
+    for x in d:
+        if i == index:
+            return x
+        i += 1
+
+
+# General helpers for mapping functions
+
+def compose(*functions: Callable[[Any], Any]) -> Callable[[Any], Any]:
+    """Compose the given functions which all take one argument.
+
+    Args:
+        functions: The functions to compose
+
+    Returns:
+        A function which applies the given functions in the order they appear in the argument
+    """
+    def apply(x):
+        for f in functions:
+            x = f(x)
+        return x
+    return apply
+
+
+def map_on_dict(map: Callable[[tf.Tensor], tf.Tensor]
+                ) -> Callable[[Dict[K, tf.Tensor]], Dict[K, tf.Tensor]]:
+    """Apply the mapping function on each element of a dict.
+
+    Args:
+        map: The mapping function.
+
+    Retuns:
+        A function which applies the mapping function on each element of a
+        dict.
+    """
+    def apply(x: Dict[K, tf.Tensor]) -> Dict[K, tf.Tensor]:
+        return {k: map(v) for k, v in x.items()}
+    return apply
+
+
+def map_on_dict_key(key: K, mapping: Callable[[T], T]
+                    ) -> Callable[[Dict[K, T]], Dict[K, T]]:
+    """Apply a mapping function on one key of the dict and leave the others unchanged.
+
+    Args:
+        key: The key in the dictionary
+        mapping: A function mapping the tensor with this key to a new value
+
+    Returns:
+        A function which takes a dictionary and applies the given function on the one
+        element.
+    """
+    def apply(d):
+        d[key] = mapping(d[key])
+        return d
+    return apply
 
 
 def get_value(key: K) -> Callable[[Dict[K, T]], T]:
@@ -35,6 +100,20 @@ def get_value(key: K) -> Callable[[Dict[K, T]], T]:
     return get
 
 
+# Helpers for mapping images
+
+def get_image(x: Dict[str, T]) -> T:
+    """Get the object with the key 'image' from the dict.
+
+    Args:
+        x: The dict.
+
+    Returns:
+        The value for the key 'image'.
+    """
+    return x['image']
+
+
 def to_float32(x: tf.Tensor) -> tf.Tensor:
     """Cast the given tensor to float32.
 
@@ -45,22 +124,6 @@ def to_float32(x: tf.Tensor) -> tf.Tensor:
         The tensor casts to float32.
     """
     return tf.cast(x, tf.float32)
-
-
-def map_on_dict(map: Callable[[tf.Tensor], tf.Tensor]
-                ) -> Callable[[Dict[K, tf.Tensor]], Dict[K, tf.Tensor]]:
-    """Apply the mapping function on each element of a dict.
-
-    Args:
-        map: The mapping function.
-
-    Retuns:
-        A function which applies the mapping function on each element of a
-        dict.
-    """
-    def apply(x: Dict[K, tf.Tensor]) -> Dict[K, tf.Tensor]:
-        return {k: map(v) for k, v in x.items()}
-    return apply
 
 
 def from_255_to_1_range(x: tf.Tensor) -> tf.Tensor:
@@ -108,6 +171,8 @@ def crop_kernel_to_size(x: Dict[str, tf.Tensor]) -> Dict[str, tf.Tensor]:
     return {'kernel': kernel[:size[0], :size[1]]}
 
 
+# Helpers for light fields
+
 def lf_to_batch(lf: tf.Tensor) -> tf.Tensor:
     """Flatten the first two dimensions of a light field to get a batch of images.
 
@@ -133,28 +198,3 @@ def lf_batch_idx(grid, i: int, j: int):
         The index in a flattened light field.
     """
     return i * grid[1] + j
-
-
-def get_one_example(dataset: tf.data.Dataset, index: int = 0,
-                    random: bool = False):
-    """Get one example of a TensorFlow dataset for testing/visualization.
-
-    Args:
-        dataset: The TensorFlow dataset.
-        index: The index of the example (default: 0).
-        random: If the dataset should be shuffled before the example is drawn
-            (default: False).
-
-    Returns:
-        One example tensor of the given dataset.
-    """
-    if random:
-        d = dataset.shuffle(100)
-    else:
-        d = dataset
-
-    i = 0
-    for x in d:
-        if i == index:
-            return x
-        i += 1
